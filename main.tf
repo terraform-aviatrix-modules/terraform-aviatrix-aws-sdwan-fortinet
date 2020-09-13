@@ -264,13 +264,13 @@ resource "aws_eip" "headend_2" {
 resource "aws_eip_association" "eip_headend" {
   count         = var.ha_gw ? 0 : 1
   instance_id   = aws_instance.headend[0].id
-  allocation_id = aws_eip.headend_1[0].id
+  allocation_id = aws_eip.headend_1.id
 }
 
 resource "aws_eip_association" "eip_headend_1" {
   count         = var.ha_gw ? 1 : 0
   instance_id   = aws_instance.headend_1[0].id
-  allocation_id = aws_eip.headend_1[0].id
+  allocation_id = aws_eip.headend_1.id
 }
 
 resource "aws_eip_association" "eip_headend_2" {
