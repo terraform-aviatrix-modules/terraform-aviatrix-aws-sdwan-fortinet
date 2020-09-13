@@ -151,21 +151,21 @@ resource "aws_s3_bucket_object" "config" {
   count  = var.ha_gw ? 0 : 1
   bucket = aws_s3_bucket.bootstrap.id
   key    = "sdwan_config.conf"
-  source = local_file.template_single.filename
+  source = local_file.template_single[0].filename
 }
 
 resource "aws_s3_bucket_object" "config_1" {
   count  = var.ha_gw ? 1 : 0
   bucket = aws_s3_bucket.bootstrap.id
   key    = "sdwan-a_config.conf"
-  source = local_file.template_1.filename
+  source = local_file.template_1[0].filename
 }
 
 resource "aws_s3_bucket_object" "config_2" {
   count  = var.ha_gw ? 1 : 0
   bucket = aws_s3_bucket.bootstrap.id
   key    = "sdwan-b_config.conf"
-  source = local_file.template_2.filename
+  source = local_file.template_2[0].filename
 }
 
 #SDWAN Headend (non-HA)
