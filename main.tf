@@ -70,6 +70,11 @@ resource "random_string" "psk" {
 resource "aws_s3_bucket" "bootstrap" {
   bucket = "${var.name}-sdwan-bootstrap-${random_string.bucket.result}"
   acl    = "private"
+  lifecycle {
+      ignore_changes [
+          bucket,
+      ]
+  }
 }
 
 #Create bootstrap configs based on template files
@@ -127,7 +132,7 @@ locals {
     }
   )
 }
-
+/*
 #Create the bootstrap files
 resource "local_file" "template_single" {
   count    = var.ha_gw ? 0 : 1
@@ -279,3 +284,5 @@ resource "aws_eip_association" "eip_headend_2" {
   instance_id   = aws_instance.headend_2[0].id
   allocation_id = aws_eip.headend_2[0].id
 }
+
+*/
