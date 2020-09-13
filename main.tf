@@ -67,7 +67,7 @@ resource "random_string" "psk" {
 
 #AWS Bootstrap environment for FortiGate
 resource "aws_s3_bucket" "bootstrap" {
-  bucket = "${var.name}-sdwan-bootstrap-${random_string.bucket}"
+  bucket = "${var.name}-sdwan-bootstrap-${random_string.bucket.result}"
   acl    = "private"
 }
 
@@ -77,15 +77,15 @@ locals {
     name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
     REMASN         = var.sdwan_asn
-    pre-shared-key = random_string.psk
+    pre-shared-key = random_string.psk.result
     tunnel1_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 2)
     tunnel1_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 1)
     tunnel1_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 0))
     tunnel2_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 2)
     tunnel2_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 1)
     tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 1))
-    transit_gw     = data.aviatrix_transit_gateway.default.public_ip
-    transit_gw_ha  = data.aviatrix_transit_gateway.default.ha_public_ip
+    transit_gw     = var.transit_gw_obj.public_ip
+    transit_gw_ha  = var.transit_gw_obj.ha_public_ip
     password       = var.fortigate_password
     }
   )
@@ -93,7 +93,7 @@ locals {
     name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
     REMASN         = var.sdwan_asn
-    pre-shared-key = "${random_string.psk}-headend1"
+    pre-shared-key = "${random_string.psk.result}-headend1"
     headend_nr     = 1
     tunnel1_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 2)
     tunnel1_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 1)
@@ -102,8 +102,8 @@ locals {
     tunnel2_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 1)
     tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 1))
     peerip         = cidrhost(aws_subnet.sdwan_2.cidr_block, 10)
-    transit_gw     = data.aviatrix_transit_gateway.default.public_ip
-    transit_gw_ha  = data.aviatrix_transit_gateway.default.ha_public_ip
+    transit_gw     = var.transit_gw_obj.public_ip
+    transit_gw_ha  = var.transit_gw_obj.ha_public_ip
     password       = var.fortigate_password
     }
   )
@@ -111,7 +111,7 @@ locals {
     name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
     REMASN         = var.sdwan_asn
-    pre-shared-key = "${random_string.psk}-headend2"
+    pre-shared-key = "${random_string.psk.result}-headend2"
     headend_nr     = 2
     tunnel1_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 2), 2)
     tunnel1_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 2), 1)

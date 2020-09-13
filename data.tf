@@ -15,7 +15,3 @@ data "aws_ami" "fortios-byol" {
   }
   owners = ["679593333241"] # Marketplace
 }
-
-data "aviatrix_transit_gateway" "default" {
-  gw_name = var.transit_gw
-}

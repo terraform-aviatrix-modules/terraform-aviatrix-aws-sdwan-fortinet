@@ -14,8 +14,8 @@ variable "cidr" {
   type        = string
 }
 
-variable "transit_gw" {
-  description = "Transit gateway to attach spoke to"
+variable "transit_gw_obj" {
+  description = "Transit gateway object including attributes, to attach sdwan GW to"
   type        = string
 }
 
