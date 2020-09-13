@@ -71,7 +71,7 @@ resource "aws_s3_bucket" "bootstrap" {
   bucket = "${var.name}-sdwan-bootstrap-${random_string.bucket.result}"
   acl    = "private"
   lifecycle {
-      ignore_changes [
+      ignore_changes = [
           bucket,
       ]
   }
