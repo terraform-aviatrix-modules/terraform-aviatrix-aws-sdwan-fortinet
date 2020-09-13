@@ -71,9 +71,9 @@ resource "aws_s3_bucket" "bootstrap" {
   bucket = "sdwan-bootstrap-${random_string.bucket.result}"
   acl    = "private"
   lifecycle {
-      ignore_changes = [
-          bucket,
-      ]
+    ignore_changes = [
+      bucket,
+    ]
   }
 }
 
@@ -132,7 +132,7 @@ locals {
     }
   )
 }
-/*
+
 #Create the bootstrap files
 resource "local_file" "template_single" {
   count    = var.ha_gw ? 0 : 1
@@ -158,6 +158,9 @@ resource "aws_s3_bucket_object" "config" {
   bucket = aws_s3_bucket.bootstrap.id
   key    = "sdwan_config.conf"
   source = local_file.template_single[0].filename
+  lifecycle {
+    ignore_changes = [source]
+  }
 }
 
 resource "aws_s3_bucket_object" "config_1" {
@@ -165,6 +168,9 @@ resource "aws_s3_bucket_object" "config_1" {
   bucket = aws_s3_bucket.bootstrap.id
   key    = "sdwan-a_config.conf"
   source = local_file.template_1[0].filename
+  lifecycle {
+    ignore_changes = [source]
+  }
 }
 
 resource "aws_s3_bucket_object" "config_2" {
@@ -172,6 +178,9 @@ resource "aws_s3_bucket_object" "config_2" {
   bucket = aws_s3_bucket.bootstrap.id
   key    = "sdwan-b_config.conf"
   source = local_file.template_2[0].filename
+  lifecycle {
+    ignore_changes = [source]
+  }
 }
 
 #SDWAN Headend (non-HA)
@@ -284,5 +293,3 @@ resource "aws_eip_association" "eip_headend_2" {
   instance_id   = aws_instance.headend_2[0].id
   allocation_id = aws_eip.headend_2[0].id
 }
-
-*/
