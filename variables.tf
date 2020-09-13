@@ -16,7 +16,6 @@ variable "cidr" {
 
 variable "transit_gw_obj" {
   description = "Transit gateway object including attributes, to attach sdwan GW to"
-  type        = string
 }
 
 variable "az1" {

@@ -120,8 +120,8 @@ locals {
     tunnel2_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 3), 1)
     tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 3))
     peerip         = cidrhost(aws_subnet.sdwan_1.cidr_block, 10)
-    transit_gw     = data.aviatrix_transit_gateway.default.public_ip
-    transit_gw_ha  = data.aviatrix_transit_gateway.default.ha_public_ip
+    transit_gw     = var.transit_gw_obj.eip
+    transit_gw_ha  = var.transit_gw_obj.ha_eip
     password       = var.fortigate_password
     }
   )
