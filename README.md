@@ -1,7 +1,7 @@
 # terraform-aviatrix-aws-sdwan-fortinet
 
 ### Description
-Deploys edge VPN with Fortinet SDWAN headends and creates tunnels to transit gateway.
+Deploys edge VPC with Fortinet SDWAN headends and creates tunnels to transit gateway.
 
 ### Diagram
 \<Provide a diagram of the high level constructs thet will be created by this module>

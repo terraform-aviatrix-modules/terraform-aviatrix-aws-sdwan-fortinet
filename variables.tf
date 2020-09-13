@@ -9,6 +9,11 @@ variable "region" {
   type        = string
 }
 
+variable "cidr" {
+  description = "The CIDR range to be used for the VPC"
+  type        = string
+}
+
 variable "transit_gw" {
   description = "Transit gateway to attach spoke to"
   type        = string
