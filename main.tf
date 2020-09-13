@@ -186,7 +186,7 @@ resource "aws_instance" "headend" {
   {
     "bucket" : "${aws_s3_bucket.bootstrap.bucket}",
     "region" : "${var.region}",
-    "config" : "/${aws_s3_bucket_object.config.key}",
+    "config" : "/${aws_s3_bucket_object.config[0].key}",
   }
   EOF
 
@@ -214,7 +214,7 @@ resource "aws_instance" "headend_1" {
   {
     "bucket" : "${aws_s3_bucket.bootstrap.bucket}",
     "region" : "${var.region}",
-    "config" : "/${aws_s3_bucket_object.config_1.key}",
+    "config" : "/${aws_s3_bucket_object.config_1[0].key}",
   }
   EOF
 
@@ -242,7 +242,7 @@ resource "aws_instance" "headend_2" {
   {
     "bucket" : "${aws_s3_bucket.bootstrap.bucket}",
     "region" : "${var.region}",
-    "config" : "/${aws_s3_bucket_object.config_2.key}",
+    "config" : "/${aws_s3_bucket_object.config_2[0].key}",
   }
   EOF
 
