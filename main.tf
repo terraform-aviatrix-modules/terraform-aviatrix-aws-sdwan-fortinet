@@ -194,7 +194,7 @@ resource "aws_instance" "headend" {
   lifecycle {
     ignore_changes = [security_groups]
   }
-  iam_instance_profile = length(var.iam_role_name) > 0 ? var.iam_role_name : aws_iam_role.bootstrap.name
+  iam_instance_profile = length(var.iam_role_name) > 0 ? var.iam_role_name : aws_iam_role.bootstrap[0].name
   source_dest_check    = false
   private_ip           = cidrhost(aws_subnet.sdwan_1.cidr_block, 10)
   user_data            = <<EOF
@@ -222,7 +222,7 @@ resource "aws_instance" "headend_1" {
   lifecycle {
     ignore_changes = [security_groups]
   }
-  iam_instance_profile = length(var.iam_role_name) > 0 ? var.iam_role_name : aws_iam_role.bootstrap.name
+  iam_instance_profile = length(var.iam_role_name) > 0 ? var.iam_role_name : aws_iam_role.bootstrap[0].name
   source_dest_check    = false
   private_ip           = cidrhost(aws_subnet.sdwan_1.cidr_block, 10)
   user_data            = <<EOF
@@ -250,7 +250,7 @@ resource "aws_instance" "headend_2" {
   lifecycle {
     ignore_changes = [security_groups]
   }
-  iam_instance_profile = length(var.iam_role_name) > 0 ? var.iam_role_name : aws_iam_role.bootstrap.name
+  iam_instance_profile = length(var.iam_role_name) > 0 ? var.iam_role_name : aws_iam_role.bootstrap[0].name
   source_dest_check    = false
   private_ip           = cidrhost(aws_subnet.sdwan_2.cidr_block, 10)
   user_data            = <<EOF
@@ -343,12 +343,12 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "policy_role" {
   count      = length(var.iam_role_name) > 0 ? 0 : 1
-  role       = aws_iam_role.bootstrap.name
-  policy_arn = aws_iam_policy.bootstrap.arn
+  role       = aws_iam_role.bootstrap[0].name
+  policy_arn = aws_iam_policy.bootstrap[0].arn
 }
 
 resource "aws_iam_instance_profile" "instance_role" {
   count = length(var.iam_role_name) > 0 ? 0 : 1
   name  = "bootstrap-${random_string.bucket.result}"
-  role  = aws_iam_role.bootstrap.name
+  role  = aws_iam_role.bootstrap[0].name
 }
