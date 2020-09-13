@@ -57,6 +57,7 @@ resource "aws_security_group" "sdwan" {
 resource "random_string" "bucket" {
   length  = 16
   special = false
+  upper   = false
 }
 
 #Random string for secret pre-shared-key
