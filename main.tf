@@ -74,7 +74,7 @@ resource "aws_s3_bucket" "bootstrap" {
 
 #Create bootstrap configs based on template files
 locals {
-  template-single = templatefile("${path.module}/bootstrap/headend-single.tpl", {
+  template_single = templatefile("${path.module}/bootstrap/headend-single.tpl", {
     name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
     REMASN         = var.sdwan_asn
@@ -90,7 +90,7 @@ locals {
     password       = var.fortigate_password
     }
   )
-  template-1 = templatefile("${path.module}/bootstrap/headend-ha.tpl", {
+  template_1 = templatefile("${path.module}/bootstrap/headend-ha.tpl", {
     name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
     REMASN         = var.sdwan_asn
@@ -108,7 +108,7 @@ locals {
     password       = var.fortigate_password
     }
   )
-  template-2 = templatefile("${path.module}/bootstrap/headend-ha.tpl", {
+  template_2 = templatefile("${path.module}/bootstrap/headend-ha.tpl", {
     name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
     REMASN         = var.sdwan_asn
@@ -131,19 +131,19 @@ locals {
 #Create the bootstrap files
 resource "local_file" "template_single" {
   count    = var.ha_gw ? 0 : 1
-  content  = local.template-single
+  content  = local.template_single
   filename = "${path.module}/bootstrap/sdwan.conf"
 }
 
 resource "local_file" "template_1" {
   count    = var.ha_gw ? 1 : 0
-  content  = local.template-1
+  content  = local.template_1
   filename = "${path.module}/bootstrap/sdwan-1.conf"
 }
 
 resource "local_file" "template_2" {
   count    = var.ha_gw ? 1 : 0
-  content  = local.template-2
+  content  = local.template_2
   filename = "${path.module}/bootstrap/sdwan-2.conf"
 }
 
