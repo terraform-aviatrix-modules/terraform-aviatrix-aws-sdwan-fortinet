@@ -68,7 +68,7 @@ resource "random_string" "psk" {
 
 #AWS Bootstrap environment for FortiGate
 resource "aws_s3_bucket" "bootstrap" {
-  bucket = "${var.name}-sdwan-bootstrap-${random_string.bucket.result}"
+  bucket = "sdwan-bootstrap-${random_string.bucket.result}"
   acl    = "private"
   lifecycle {
       ignore_changes = [
