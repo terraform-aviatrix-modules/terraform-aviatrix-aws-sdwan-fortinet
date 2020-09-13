@@ -192,7 +192,7 @@ resource "aws_instance" "headend" {
 
   depends_on = [aws_s3_bucket_object.config]
   tags = {
-    Name = length(var.name) > 0 ? "avx-${var.name}-sdwan-edge-headend" : "avx-${var.region}-sdwan-edge-headend",
+    Name = length(var.name) > 0 ? "${var.name}" : "avx-sdwan-edge-headend",
   }
 }
 
@@ -220,7 +220,7 @@ resource "aws_instance" "headend_1" {
 
   depends_on = [aws_s3_bucket_object.config_1]
   tags = {
-    Name = length(var.name) > 0 ? "avx-${var.name}-sdwan-edge-headend1" : "avx-${var.region}-sdwan-edge-headend1",
+    Name = length(var.name) > 0 ? "${var.name}-headend1" : "avx-sdwan-edge-headend1",
   }
 }
 
@@ -248,7 +248,7 @@ resource "aws_instance" "headend_2" {
 
   depends_on = [aws_s3_bucket_object.config_2]
   tags = {
-    Name = length(var.name) > 0 ? "avx-${var.name}-sdwan-edge-headend2" : "avx-${var.region}-sdwan-edge-headend2",
+    Name = length(var.name) > 0 ? "${var.name}-headend2" : "avx-sdwan-edge-headend2",
   }
 }
 
