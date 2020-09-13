@@ -51,7 +51,7 @@ variable "fortios_image_type" {
 variable "instance_size" {
   description = "AWS Instance size for the SDWAN gateways"
   type        = string
-  default     = "t3.medium"
+  default     = "t2.micro"
 }
 
 variable "fortigate_password" {
