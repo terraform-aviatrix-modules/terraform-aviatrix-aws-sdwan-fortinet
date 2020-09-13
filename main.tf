@@ -194,7 +194,7 @@ resource "aws_instance" "headend" {
   lifecycle {
     ignore_changes = [security_groups]
   }
-  iam_instance_profile = var.iam_role_name
+  iam_instance_profile = length(var.iam_role_name) > 0 ? var.iam_role_name : aws_iam_role.bootstrap.name
   source_dest_check    = false
   private_ip           = cidrhost(aws_subnet.sdwan_1.cidr_block, 10)
   user_data            = <<EOF
@@ -222,7 +222,7 @@ resource "aws_instance" "headend_1" {
   lifecycle {
     ignore_changes = [security_groups]
   }
-  iam_instance_profile = var.iam_role_name
+  iam_instance_profile = length(var.iam_role_name) > 0 ? var.iam_role_name : aws_iam_role.bootstrap.name
   source_dest_check    = false
   private_ip           = cidrhost(aws_subnet.sdwan_1.cidr_block, 10)
   user_data            = <<EOF
@@ -250,7 +250,7 @@ resource "aws_instance" "headend_2" {
   lifecycle {
     ignore_changes = [security_groups]
   }
-  iam_instance_profile = var.iam_role_name
+  iam_instance_profile = length(var.iam_role_name) > 0 ? var.iam_role_name : aws_iam_role.bootstrap.name
   source_dest_check    = false
   private_ip           = cidrhost(aws_subnet.sdwan_2.cidr_block, 10)
   user_data            = <<EOF
@@ -292,4 +292,63 @@ resource "aws_eip_association" "eip_headend_2" {
   count         = var.ha_gw ? 1 : 0
   instance_id   = aws_instance.headend_2[0].id
   allocation_id = aws_eip.headend_2[0].id
+}
+
+#Create IAM role and policy for the SDWAN instance to access the bucket.
+resource "aws_iam_role" "bootstrap" {
+  count              = length(var.iam_role_name) > 0 ? 0 : 1
+  name               = "bootstrap-${random_string.bucket.result}"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+  lifecycle {
+    ignore_changes = [name]
+  }
+}
+
+resource "aws_iam_policy" "bootstrap" {
+  count  = length(var.iam_role_name) > 0 ? 0 : 1
+  name   = "bootstrap-${random_string.bucket.result}"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:Get*",
+                "s3:List*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+  lifecycle {
+    ignore_changes = [name]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "policy_role" {
+  count      = length(var.iam_role_name) > 0 ? 0 : 1
+  role       = aws_iam_role.bootstrap.name
+  policy_arn = aws_iam_policy.bootstrap.arn
+}
+
+resource "aws_iam_instance_profile" "instance_role" {
+  count = length(var.iam_role_name) > 0 ? 0 : 1
+  name  = "bootstrap-${random_string.bucket.result}"
+  role  = aws_iam_role.bootstrap.name
 }

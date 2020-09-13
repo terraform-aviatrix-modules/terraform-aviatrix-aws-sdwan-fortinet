@@ -48,6 +48,7 @@ fortigate_password | Avtx#1234 | Password for FortiGate instances.
 tunnel_cidr | 172.31.255.0/28 | CIDR for creation of tunnel IP's. At least /29 for single, /28 for HA.
 aviatrix_asn | 65000 | ASN To be used on Aviatrix Transit Gateway for BGP
 sdwan_asn | 65001 | ASN To be used on SDWAN Gateway for BGP
+iam_role_name | | If no name is provided, a new IAM role will be created with policy to access S3 buckets. This is used to bootstrap the SDWAN gateway.
 
 ### Outputs
 This module will return the following outputs:
