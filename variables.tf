@@ -78,3 +78,9 @@ variable "sdwan_asn" {
   type        = string
   default     = "65001"
 }
+
+variable "iam_role_name" {
+  description = "IAM Role to assign to SDWAN appliances for bootstrapping"
+  type        = string
+  default     = ""
+}
