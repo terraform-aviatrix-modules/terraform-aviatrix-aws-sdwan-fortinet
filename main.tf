@@ -101,7 +101,7 @@ locals {
     tunnel2_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 2)
     tunnel2_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 1)
     tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 1))
-    peerip         = aws_instance.headend_2.private_ip
+    peerip         = cidrhost(aws_subnet.sdwan_2.cidr_block, 10)
     transit_gw     = data.aviatrix_transit_gateway.default.public_ip
     transit_gw_ha  = data.aviatrix_transit_gateway.default.ha_public_ip
     password       = var.fortigate_password
@@ -119,7 +119,7 @@ locals {
     tunnel2_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 3), 2)
     tunnel2_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 3), 1)
     tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 3))
-    peerip         = aws_instance.headend_1.private_ip
+    peerip         = cidrhost(aws_subnet.sdwan_1.cidr_block, 10)
     transit_gw     = data.aviatrix_transit_gateway.default.public_ip
     transit_gw_ha  = data.aviatrix_transit_gateway.default.ha_public_ip
     password       = var.fortigate_password
@@ -171,7 +171,7 @@ resource "aws_s3_bucket_object" "config_2" {
 #SDWAN Headend (non-HA)
 resource "aws_instance" "headend" {
   count                       = var.ha_gw ? 0 : 1
-  ami                         = data.aws_ami.fortios.id
+  ami                         = data.aws_ami.fortios-on-demand.id
   instance_type               = var.instance_size
   subnet_id                   = aws_subnet.sdwan_1.id
   associate_public_ip_address = true
@@ -199,7 +199,7 @@ resource "aws_instance" "headend" {
 #SDWAN Headend 1 (HA)
 resource "aws_instance" "headend_1" {
   count                       = var.ha_gw ? 1 : 0
-  ami                         = data.aws_ami.fortios.id
+  ami                         = data.aws_ami.fortios-on-demand.id
   instance_type               = var.instance_size
   subnet_id                   = aws_subnet.sdwan_1.id
   associate_public_ip_address = true
@@ -227,7 +227,7 @@ resource "aws_instance" "headend_1" {
 #SDWAN Headend 2 (HA)
 resource "aws_instance" "headend_2" {
   count                       = var.ha_gw ? 1 : 0
-  ami                         = data.aws_ami.fortios.id
+  ami                         = data.aws_ami.fortios-on-demand.id
   instance_type               = var.instance_size
   subnet_id                   = aws_subnet.sdwan_2.id
   associate_public_ip_address = true
