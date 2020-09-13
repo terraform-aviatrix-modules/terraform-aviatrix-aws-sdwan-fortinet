@@ -186,7 +186,7 @@ resource "aws_s3_bucket_object" "config_2" {
 #SDWAN Headend (non-HA)
 resource "aws_instance" "headend" {
   count                       = var.ha_gw ? 0 : 1
-  ami                         = data.aws_ami.fortios-on-demand.id
+  ami                         = data.aws_ami.fortios_on_demand.id
   instance_type               = var.instance_size
   subnet_id                   = aws_subnet.sdwan_1.id
   associate_public_ip_address = true
@@ -214,7 +214,7 @@ resource "aws_instance" "headend" {
 #SDWAN Headend 1 (HA)
 resource "aws_instance" "headend_1" {
   count                       = var.ha_gw ? 1 : 0
-  ami                         = data.aws_ami.fortios-on-demand.id
+  ami                         = data.aws_ami.fortios_on_demand.id
   instance_type               = var.instance_size
   subnet_id                   = aws_subnet.sdwan_1.id
   associate_public_ip_address = true
@@ -242,7 +242,7 @@ resource "aws_instance" "headend_1" {
 #SDWAN Headend 2 (HA)
 resource "aws_instance" "headend_2" {
   count                       = var.ha_gw ? 1 : 0
-  ami                         = data.aws_ami.fortios-on-demand.id
+  ami                         = data.aws_ami.fortios_on_demand.id
   instance_type               = var.instance_size
   subnet_id                   = aws_subnet.sdwan_2.id
   associate_public_ip_address = true

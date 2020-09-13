@@ -1,4 +1,4 @@
-data "aws_ami" "fortios-on-demand" {
+data "aws_ami" "fortios_on_demand" {
   most_recent = true
   filter {
     name   = "name"
@@ -7,7 +7,7 @@ data "aws_ami" "fortios-on-demand" {
   owners = ["679593333241"] # Marketplace
 }
 
-data "aws_ami" "fortios-byol" {
+data "aws_ami" "fortios_byol" {
   most_recent = true
   filter {
     name   = "name"
