@@ -55,13 +55,13 @@ resource "aws_security_group" "sdwan" {
 
 #Random string for unique s3 bucket
 resource "random_string" "bucket" {
-  length = 16
+  length  = 16
   special = false
 }
 
 #Random string for secret pre-shared-key
 resource "random_string" "psk" {
-  length = 100
+  length  = 100
   special = false #Long key, without special chars to prevent issues.
 }
 
@@ -76,23 +76,23 @@ locals {
   template-single = templatefile("${path.module}/bootstrap/headend-single.tpl", {
     name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
-    REMASN         = var.sdwan_asn    
+    REMASN         = var.sdwan_asn
     pre-shared-key = random_string.psk
     tunnel1_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 2)
     tunnel1_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 1)
     tunnel1_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 0))
     tunnel2_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 2)
     tunnel2_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 1)
-    tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 1))    
+    tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 1))
     transit_gw     = data.aviatrix_transit_gateway.default.public_ip
     transit_gw_ha  = data.aviatrix_transit_gateway.default.ha_public_ip
     password       = var.fortigate_password
     }
-  )    
+  )
   template-1 = templatefile("${path.module}/bootstrap/headend-ha.tpl", {
     name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
-    REMASN         = var.sdwan_asn        
+    REMASN         = var.sdwan_asn
     pre-shared-key = "${random_string.psk}-headend1"
     headend_nr     = 1
     tunnel1_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 2)
@@ -108,11 +108,11 @@ locals {
     }
   )
   template-2 = templatefile("${path.module}/bootstrap/headend-ha.tpl", {
-    name           = length(var.name) > 0 ? var.name : var.region      
+    name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
-    REMASN         = var.sdwan_asn        
+    REMASN         = var.sdwan_asn
     pre-shared-key = "${random_string.psk}-headend2"
-    headend_nr     = 2    
+    headend_nr     = 2
     tunnel1_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 2), 2)
     tunnel1_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 2), 1)
     tunnel1_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 2))
@@ -129,13 +129,13 @@ locals {
 
 #Create the bootstrap files
 resource "local_file" "template_single" {
-  count    = var.ha_gw ? 0 : 1    
+  count    = var.ha_gw ? 0 : 1
   content  = local.template-single
   filename = "${path.module}/bootstrap/sdwan.conf"
 }
 
 resource "local_file" "template_1" {
-  count    = var.ha_gw ? 1 : 0    
+  count    = var.ha_gw ? 1 : 0
   content  = local.template-1
   filename = "${path.module}/bootstrap/sdwan-1.conf"
 }
@@ -170,7 +170,7 @@ resource "aws_s3_bucket_object" "config_2" {
 
 #SDWAN Headend (non-HA)
 resource "aws_instance" "headend" {
-  count                       = var.ha_gw ? 0 : 1    
+  count                       = var.ha_gw ? 0 : 1
   ami                         = data.aws_ami.fortios.id
   instance_type               = var.instance_size
   subnet_id                   = aws_subnet.sdwan_1.id
@@ -198,7 +198,7 @@ resource "aws_instance" "headend" {
 
 #SDWAN Headend 1 (HA)
 resource "aws_instance" "headend_1" {
-  count                       = var.ha_gw ? 1 : 0    
+  count                       = var.ha_gw ? 1 : 0
   ami                         = data.aws_ami.fortios.id
   instance_type               = var.instance_size
   subnet_id                   = aws_subnet.sdwan_1.id
@@ -268,7 +268,7 @@ resource "aws_eip_association" "eip_headend" {
 }
 
 resource "aws_eip_association" "eip_headend_1" {
-  count         = var.ha_gw ? 1 : 0    
+  count         = var.ha_gw ? 1 : 0
   instance_id   = aws_instance.headend_1.id
   allocation_id = aws_eip.headend_1.id
 }
