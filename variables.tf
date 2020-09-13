@@ -33,15 +33,15 @@ variable "ha_gw" {
 }
 
 variable "fortios_version" {
-  description = "Determines which FortiOS image version will be deployed."    
-  type    = string
-  default = "6.2.3" #Make sure the version is available in the Marketplace
+  description = "Determines which FortiOS image version will be deployed."
+  type        = string
+  default     = "6.2.3" #Make sure the version is available in the Marketplace
 }
 
 variable "fortios_image_type" {
-  description = "Determines whether byol or on-demand image should be used."    
-  type    = string
-  default = "on-demand"
+  description = "Determines whether byol or on-demand image should be used."
+  type        = string
+  default     = "on-demand"
 }
 
 variable "instance_size" {
@@ -51,25 +51,25 @@ variable "instance_size" {
 }
 
 variable "fortigate_password" {
-    description = "Password for FortiGate instances."
-    type = string
-    default = "Avtx#1234"
+  description = "Password for FortiGate instances."
+  type        = string
+  default     = "Avtx#1234"
 }
 
 variable "tunnel_cidr" {
-    description = "CIDR to be used to create tunnel addresses"
-    type = string
-    default = "172.31.255.0/28"
+  description = "CIDR to be used to create tunnel addresses"
+  type        = string
+  default     = "172.31.255.0/28"
 }
 
 variable "aviatrix_asn" {
-    description = "ASN To be used on Aviatrix Transit Gateway for BGP"
-    type = string
-    default = "65000"
+  description = "ASN To be used on Aviatrix Transit Gateway for BGP"
+  type        = string
+  default     = "65000"
 }
 
 variable "sdwan_asn" {
-    description = "ASN To be used on SDWAN Gateway for BGP"
-    type = string
-    default = "65001"
+  description = "ASN To be used on SDWAN Gateway for BGP"
+  type        = string
+  default     = "65001"
 }
