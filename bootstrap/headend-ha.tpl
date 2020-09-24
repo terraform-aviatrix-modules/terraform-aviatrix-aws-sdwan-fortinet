@@ -95,7 +95,7 @@ config system zone
 end
 
 config router bgp
-    set as {ASN}
+    set as ${ASN}
     set ibgp-multipath enable
     set ebgp-multipath enable
     set graceful-restart enable
