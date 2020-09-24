@@ -93,8 +93,8 @@ locals {
 
   template_single = templatefile("${path.module}/bootstrap/headend-single.tpl", {
     name           = length(var.name) > 0 ? var.name : var.region
-    ASN            = var.aviatrix_asn
-    REMASN         = var.sdwan_asn
+    ASN            = var.sdwan_asn
+    REMASN         = var.aviatrix_asn
     pre-shared-key = random_string.psk.result
     tunnel1_ip     = local.gw1_tunnel1_sdwan_ip
     tunnel1_rem    = local.gw1_tunnel1_avx_ip
@@ -109,8 +109,8 @@ locals {
   )
   template_1 = templatefile("${path.module}/bootstrap/headend-ha.tpl", {
     name           = length(var.name) > 0 ? var.name : var.region
-    ASN            = var.aviatrix_asn
-    REMASN         = var.sdwan_asn
+    ASN            = var.sdwan_asn
+    REMASN         = var.aviatrix_asn
     pre-shared-key = "${random_string.psk.result}-headend1"
     headend_nr     = 1
     tunnel1_ip     = local.gw1_tunnel1_sdwan_ip
@@ -127,8 +127,8 @@ locals {
   )
   template_2 = templatefile("${path.module}/bootstrap/headend-ha.tpl", {
     name           = length(var.name) > 0 ? var.name : var.region
-    ASN            = var.aviatrix_asn
-    REMASN         = var.sdwan_asn
+    ASN            = var.sdwan_asn
+    REMASN         = var.aviatrix_asn
     pre-shared-key = "${random_string.psk.result}-headend2"
     headend_nr     = 2
     tunnel1_ip     = local.gw2_tunnel1_sdwan_ip
