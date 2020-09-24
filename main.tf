@@ -79,17 +79,29 @@ resource "aws_s3_bucket" "bootstrap" {
 
 #Create bootstrap configs based on template files
 locals {
+
+  tunnel_subnetmask    = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 0))
+  tunnel_masklength    = split("/", cidrsubnet(var.tunnel_cidr, 2, 0))[1]
+  gw1_tunnel1_avx_ip   = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 1)
+  gw1_tunnel1_sdwan_ip = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 2)
+  gw1_tunnel2_avx_ip   = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 1)
+  gw1_tunnel2_sdwan_ip = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 2)
+  gw2_tunnel1_avx_ip   = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 2), 1)
+  gw2_tunnel1_sdwan_ip = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 2), 2)
+  gw2_tunnel2_avx_ip   = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 3), 1)
+  gw2_tunnel2_sdwan_ip = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 3), 2)
+
   template_single = templatefile("${path.module}/bootstrap/headend-single.tpl", {
     name           = length(var.name) > 0 ? var.name : var.region
     ASN            = var.aviatrix_asn
     REMASN         = var.sdwan_asn
     pre-shared-key = random_string.psk.result
-    tunnel1_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 2)
-    tunnel1_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 1)
-    tunnel1_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 0))
-    tunnel2_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 2)
-    tunnel2_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 1)
-    tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 1))
+    tunnel1_ip     = local.gw1_tunnel1_sdwan_ip
+    tunnel1_rem    = local.gw1_tunnel1_avx_ip
+    tunnel1_mask   = local.tunnel_subnetmask
+    tunnel2_ip     = local.gw1_tunnel2_sdwan_ip
+    tunnel2_rem    = local.gw1_tunnel2_avx_ip
+    tunnel2_mask   = local.tunnel_subnetmask
     transit_gw     = var.transit_gw_obj.eip
     transit_gw_ha  = var.transit_gw_obj.ha_eip
     password       = var.fortigate_password
@@ -101,12 +113,12 @@ locals {
     REMASN         = var.sdwan_asn
     pre-shared-key = "${random_string.psk.result}-headend1"
     headend_nr     = 1
-    tunnel1_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 2)
-    tunnel1_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 0), 1)
-    tunnel1_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 0))
-    tunnel2_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 2)
-    tunnel2_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 1), 1)
-    tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 1))
+    tunnel1_ip     = local.gw1_tunnel1_sdwan_ip
+    tunnel1_rem    = local.gw1_tunnel1_avx_ip
+    tunnel1_mask   = local.tunnel_subnetmask
+    tunnel2_ip     = local.gw1_tunnel2_sdwan_ip
+    tunnel2_rem    = local.gw1_tunnel2_avx_ip
+    tunnel2_mask   = local.tunnel_subnetmask
     peerip         = cidrhost(aws_subnet.sdwan_2.cidr_block, 10)
     transit_gw     = var.transit_gw_obj.eip
     transit_gw_ha  = var.transit_gw_obj.ha_eip
@@ -119,12 +131,12 @@ locals {
     REMASN         = var.sdwan_asn
     pre-shared-key = "${random_string.psk.result}-headend2"
     headend_nr     = 2
-    tunnel1_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 2), 2)
-    tunnel1_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 2), 1)
-    tunnel1_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 2))
-    tunnel2_ip     = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 3), 2)
-    tunnel2_rem    = cidrhost(cidrsubnet(var.tunnel_cidr, 2, 3), 1)
-    tunnel2_mask   = cidrnetmask(cidrsubnet(var.tunnel_cidr, 2, 3))
+    tunnel1_ip     = local.gw2_tunnel1_sdwan_ip
+    tunnel1_rem    = local.gw2_tunnel1_avx_ip
+    tunnel1_mask   = local.tunnel_subnetmask
+    tunnel2_ip     = local.gw2_tunnel2_sdwan_ip
+    tunnel2_rem    = local.gw2_tunnel2_avx_ip
+    tunnel2_mask   = local.tunnel_subnetmask
     peerip         = cidrhost(aws_subnet.sdwan_1.cidr_block, 10)
     transit_gw     = var.transit_gw_obj.eip
     transit_gw_ha  = var.transit_gw_obj.ha_eip
@@ -292,6 +304,26 @@ resource "aws_eip_association" "eip_headend_2" {
   count         = var.ha_gw ? 1 : 0
   instance_id   = aws_instance.headend_2[0].id
   allocation_id = aws_eip.headend_2[0].id
+}
+
+#Aviatrix VPN Tunnels
+resource "aviatrix_transit_external_device_conn" "ha" {
+  vpc_id                    = var.transit_gw_obj.vpc_id
+  connection_name           = "SDWAN-${var.region}"
+  gw_name                   = var.transit_gw_obj.gw_name
+  connection_type           = "bgp"
+  ha_enabled                = var.ha_gw
+  bgp_local_as_num          = var.aviatrix_asn
+  bgp_remote_as_num         = var.sdwan_asn
+  backup_bgp_remote_as_num  = var.ha_gw ? var.sdwan_asn : ""
+  remote_gateway_ip         = var.ha_gw ? aws_instance.headend_1.public_ip : aws_instance.headend.public_ip
+  backup_remote_gateway_ip  = var.ha_gw ? aws_instance.headend_2.public_ip : ""
+  pre_shared_key            = var.ha_gw ? "${random_string.psk.result}-headend1" : random_string.psk.result
+  backup_pre_shared_key     = var.ha_gw ? "${random_string.psk.result}-headend2" : ""
+  local_tunnel_cidr         = var.ha_gw ? "${local.gw1_tunnel1_avx_ip}/${local.tunnel_masklength},${local.gw1_tunnel2_avx_ip}/${local.tunnel_masklength}" : "${local.gw1_tunnel1_avx_ip}/${local.tunnel_masklength}"
+  remote_tunnel_cidr        = var.ha_gw ? "${local.gw1_tunnel1_sdwan_ip}/${local.tunnel_masklength},${local.gw1_tunnel2_sdwan_ip}/${local.tunnel_masklength}" : "${local.gw1_tunnel1_sdwan_ip}/${local.tunnel_masklength}"
+  backup_local_tunnel_cidr  = var.ha_gw ? "${local.gw2_tunnel1_avx_ip}/${local.tunnel_masklength},${local.gw2_tunnel2_avx_ip}/${local.tunnel_masklength}" : ""
+  backup_remote_tunnel_cidr = var.ha_gw ? "${local.gw2_tunnel1_sdwan_ip}/${local.tunnel_masklength},${local.gw2_tunnel2_sdwan_ip}/${local.tunnel_masklength}" : ""
 }
 
 #Create IAM role and policy for the SDWAN instance to access the bucket.
