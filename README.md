@@ -45,7 +45,7 @@ instance_size | t2.small | Instance size of the SDWAN GW's
 fortios_version | 6.2.3 | Provide version number to deploy FortiGates with.
 fortios_image_type | on-demand | Set to byol if you want to use your own license.
 fortigate_password | Avtx#1234 | Password for FortiGate instances.
-tunnel_cidr | 172.31.255.0/28 | CIDR for creation of tunnel IP's. At least /29 for single, /28 for HA.
+tunnel_cidr | 172.31.255.0/28 | CIDR for creation of tunnel IP's. At least /28 is required, even in non-HA. This is because the module will always carve out 4x /30.
 aviatrix_asn | 65000 | ASN To be used on Aviatrix Transit Gateway for BGP
 sdwan_asn | 65001 | ASN To be used on SDWAN Gateway for BGP
 iam_role_name | | If no name is provided, a new IAM role will be created with policy to access S3 buckets. This is used to bootstrap the SDWAN gateway.
