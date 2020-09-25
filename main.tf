@@ -316,8 +316,8 @@ resource "aviatrix_transit_external_device_conn" "sdwan" {
   bgp_local_as_num          = var.aviatrix_asn
   bgp_remote_as_num         = var.sdwan_asn
   backup_bgp_remote_as_num  = var.ha_gw ? var.sdwan_asn : null
-  remote_gateway_ip         = var.ha_gw ? aws_instance.headend_1[0].public_ip : aws_instance.headend[0].public_ip
-  backup_remote_gateway_ip  = var.ha_gw ? aws_instance.headend_2[0].public_ip : ""
+  remote_gateway_ip         = var.ha_gw ? aws_eip.headend_1[0].public_ip : aws_eip.headend[0].public_ip
+  backup_remote_gateway_ip  = var.ha_gw ? aws_eip.headend_2[0].public_ip : ""
   pre_shared_key            = var.ha_gw ? "${random_string.psk.result}-headend1" : random_string.psk.result
   backup_pre_shared_key     = var.ha_gw ? "${random_string.psk.result}-headend2" : ""
   local_tunnel_cidr         = var.ha_gw ? "${local.gw1_tunnel1_avx_ip}/${local.tunnel_masklength},${local.gw1_tunnel2_avx_ip}/${local.tunnel_masklength}" : "${local.gw1_tunnel1_avx_ip}/${local.tunnel_masklength}"
