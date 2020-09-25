@@ -316,14 +316,14 @@ resource "aviatrix_transit_external_device_conn" "sdwan" {
   bgp_local_as_num          = var.aviatrix_asn
   bgp_remote_as_num         = var.sdwan_asn
   backup_bgp_remote_as_num  = var.ha_gw ? var.sdwan_asn : null
-  remote_gateway_ip         = var.ha_gw ? aws_eip.headend_1[0].public_ip : aws_eip.headend[0].public_ip
-  backup_remote_gateway_ip  = var.ha_gw ? aws_eip.headend_2[0].public_ip : ""
+  remote_gateway_ip         = aws_eip.headend_1.public_ip
+  backup_remote_gateway_ip  = var.ha_gw ? aws_eip.headend_2[0].public_ip : null
   pre_shared_key            = var.ha_gw ? "${random_string.psk.result}-headend1" : random_string.psk.result
-  backup_pre_shared_key     = var.ha_gw ? "${random_string.psk.result}-headend2" : ""
+  backup_pre_shared_key     = var.ha_gw ? "${random_string.psk.result}-headend2" : null
   local_tunnel_cidr         = var.ha_gw ? "${local.gw1_tunnel1_avx_ip}/${local.tunnel_masklength},${local.gw1_tunnel2_avx_ip}/${local.tunnel_masklength}" : "${local.gw1_tunnel1_avx_ip}/${local.tunnel_masklength}"
   remote_tunnel_cidr        = var.ha_gw ? "${local.gw1_tunnel1_sdwan_ip}/${local.tunnel_masklength},${local.gw1_tunnel2_sdwan_ip}/${local.tunnel_masklength}" : "${local.gw1_tunnel1_sdwan_ip}/${local.tunnel_masklength}"
-  backup_local_tunnel_cidr  = var.ha_gw ? "${local.gw2_tunnel1_avx_ip}/${local.tunnel_masklength},${local.gw2_tunnel2_avx_ip}/${local.tunnel_masklength}" : ""
-  backup_remote_tunnel_cidr = var.ha_gw ? "${local.gw2_tunnel1_sdwan_ip}/${local.tunnel_masklength},${local.gw2_tunnel2_sdwan_ip}/${local.tunnel_masklength}" : ""
+  backup_local_tunnel_cidr  = var.ha_gw ? "${local.gw2_tunnel1_avx_ip}/${local.tunnel_masklength},${local.gw2_tunnel2_avx_ip}/${local.tunnel_masklength}" : null
+  backup_remote_tunnel_cidr = var.ha_gw ? "${local.gw2_tunnel1_sdwan_ip}/${local.tunnel_masklength},${local.gw2_tunnel2_sdwan_ip}/${local.tunnel_masklength}" : null
 }
 
 #Create IAM role and policy for the SDWAN instance to access the bucket.
