@@ -307,7 +307,7 @@ resource "aws_eip_association" "eip_headend_2" {
 }
 
 #Aviatrix VPN Tunnels
-resource "aviatrix_transit_external_device_conn" "ha" {
+resource "aviatrix_transit_external_device_conn" "sdwan" {
   vpc_id                    = var.transit_gw_obj.vpc_id
   connection_name           = "SDWAN-${var.region}"
   gw_name                   = var.transit_gw_obj.gw_name
@@ -315,7 +315,7 @@ resource "aviatrix_transit_external_device_conn" "ha" {
   ha_enabled                = var.ha_gw
   bgp_local_as_num          = var.aviatrix_asn
   bgp_remote_as_num         = var.sdwan_asn
-  backup_bgp_remote_as_num  = var.ha_gw ? var.sdwan_asn : ""
+  backup_bgp_remote_as_num  = var.ha_gw ? var.sdwan_asn : null
   remote_gateway_ip         = var.ha_gw ? aws_instance.headend_1[0].public_ip : aws_instance.headend[0].public_ip
   backup_remote_gateway_ip  = var.ha_gw ? aws_instance.headend_2[0].public_ip : ""
   pre_shared_key            = var.ha_gw ? "${random_string.psk.result}-headend1" : random_string.psk.result
