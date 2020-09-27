@@ -29,9 +29,9 @@ The following variables are required:
 
 key | value
 :--- | :---
-cidr | x
-region | x
-transit_gw_obj | The name of the transit gateway we want to attach this SDWAN edge to.
+cidr | 	The IP CIDR to be used to create the SDWAN VPC.
+region | AWS region to deploy the SDWAN VPC in
+transit_gw_obj | The transit gateway object (including all attributes) we want to attach this SDWAN edge to.
 
 The following variables are optional:
 
