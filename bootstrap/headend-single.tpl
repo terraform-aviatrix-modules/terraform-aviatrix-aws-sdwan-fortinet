@@ -28,28 +28,13 @@ config vpn ipsec phase1-interface
         set dpd-retryinterval 5
         set remote-gw ${transit_gw}
     next
-    edit "HEADEND-TGHA"
-        set interface "port1"
-        set ike-version 1
-        set keylife 28800
-        set peertype any
-        set proposal aes256-sha256
-        set add-route disable
-        set psksecret "${pre-shared-key}"
-        set dpd-retryinterval 5
-        set remote-gw ${transit_gw_ha}
-    next
 end
 
 config vpn ipsec phase2-interface
     edit "HEADEND-TG"
         set phase1name "HEADEND-TG"
         set proposal aes256-sha256
-    next
-    edit "HEADEND-TGHA"
-        set phase1name "HEADEND-TGHA"
-        set proposal aes256-sha256
-    next    
+    next 
 end
 
 config system interface
@@ -59,14 +44,6 @@ config system interface
         set interface "port1"
         set ip ${tunnel1_ip} 255.255.255.255
         set remote-ip ${tunnel1_rem} ${tunnel1_mask}
-        set allowaccess ping
-    next
-    edit "HEADEND-TGHA"
-        set vdom "root"
-        set type tunnel
-        set interface "port1"
-        set ip ${tunnel2_ip} 255.255.255.255
-        set remote-ip ${tunnel2_rem} ${tunnel2_mask}
         set allowaccess ping
     next    
 end
@@ -88,10 +65,6 @@ config router bgp
     set graceful-update-delay 1
     config neighbor
         edit "${tunnel1_rem}"
-            set remote-as ${REMASN}
-            set soft-reconfiguration enable
-        next
-        edit "${tunnel2_rem}"
             set remote-as ${REMASN}
             set soft-reconfiguration enable
         next
