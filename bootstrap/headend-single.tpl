@@ -50,7 +50,7 @@ end
 
 config system zone
     edit TRANSIT
-        set interface HEADEND-TG HEADEND-TGHA
+        set interface HEADEND-TG
     end
 end
 
